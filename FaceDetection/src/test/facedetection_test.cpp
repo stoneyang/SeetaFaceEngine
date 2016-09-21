@@ -42,9 +42,9 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-  if (argc < 3) {
+  if (argc < 4) {
       cout << "Usage: " << argv[0]
-          << " image_path model_path"
+          << " image_path model_path write_path"
           << endl;
       return -1;
   }
@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
   const char* img_path = argv[1];
   seeta::FaceDetection detector(argv[2]);
 
-  detector.SetMinFaceSize(40);
+  detector.SetMinFaceSize(20);
   detector.SetScoreThresh(2.f);
   detector.SetImagePyramidScaleFactor(0.8f);
   detector.SetWindowStep(4, 4);
@@ -106,6 +106,7 @@ int main(int argc, char** argv) {
 
   cv::namedWindow("Test", cv::WINDOW_AUTOSIZE);
   cv::imshow("Test", img);
+  cv::imwrite(argv[3], img);
   cv::waitKey(0);
   cv::destroyAllWindows();
 }

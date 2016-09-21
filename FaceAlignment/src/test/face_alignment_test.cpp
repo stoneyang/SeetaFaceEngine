@@ -40,10 +40,23 @@
 #include "face_detection.h"
 #include "face_alignment.h"
 
+using namespace std;
+
 int main(int argc, char** argv)
 {
+  if (argc < 4) {
+    cout << "Usage: " << argv[0]
+         << " image_path model_path write_path"
+         << endl;
+    return -1;		 
+  }
+
+  const char* img_path = argv[1];
+  const char* output_path = argv[3];
+  
   // Initialize face detection model
-  seeta::FaceDetection detector("seeta_fd_frontal_v1.0.bin");
+  // seeta::FaceDetection detector("seeta_fd_frontal_v1.0.bin");
+  seeta::FaceDetection detector(argv[2]);
   detector.SetMinFaceSize(40);
   detector.SetScoreThresh(2.f);
   detector.SetImagePyramidScaleFactor(0.8f);
@@ -54,13 +67,13 @@ int main(int argc, char** argv)
 
   //load image
   IplImage *img_grayscale = NULL;
-  img_grayscale = cvLoadImage("../data/image_0001.png", 0);
+  img_grayscale = cvLoadImage(img_path, 0);
   if (img_grayscale == NULL)
   {
     return 0;
   }
 
-  IplImage *img_color = cvLoadImage("../data/image_0001.png", 1);
+  IplImage *img_color = cvLoadImage(img_path, 1);
   int pts_num = 5;
   int im_width = img_grayscale->width;
   int im_height = img_grayscale->height;
@@ -102,7 +115,7 @@ int main(int argc, char** argv)
   {
     cvCircle(img_color, cvPoint(points[i].x, points[i].y), 2, CV_RGB(0, 255, 0), CV_FILLED);
   }
-  cvSaveImage("result.jpg", img_color);
+  cvSaveImage(output_path, img_color);
 
   // Release memory
   cvReleaseImage(&img_color);
