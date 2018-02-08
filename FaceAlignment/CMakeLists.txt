@@ -6,8 +6,8 @@ project(seeta_fa_lib)
 option(BUILD_EXAMPLES  "Set to ON to build examples"  ON)
 
 # Use C++11
-#set(CMAKE_CXX_STANDARD 11)
-#set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 message(STATUS "C++11 support has been enabled by default.")
 
