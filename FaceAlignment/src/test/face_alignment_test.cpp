@@ -44,15 +44,18 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-  if (argc < 4) {
+  if (argc < 5) {
     cout << "Usage: " << argv[0]
-         << " image_path model_path write_path"
+         // << " image_path model_path write_path"
+         << "model_name image_file_name write_file_name pts_file_name"
          << endl;
     return -1;		 
   }
 
-  const char* img_path = argv[1];
-  const char* output_path = argv[3];
+  const char* model_name = argv[1];
+  const char* in_img = argv[2];
+  const char* out_img = argv[3];
+  const char* pts_file = argv[4];
   
   // Initialize face detection model
   // seeta::FaceDetection detector("seeta_fd_frontal_v1.0.bin");
@@ -67,13 +70,13 @@ int main(int argc, char** argv)
 
   //load image
   IplImage *img_grayscale = NULL;
-  img_grayscale = cvLoadImage(img_path, 0);
+  img_grayscale = cvLoadImage(in_img, 0);
   if (img_grayscale == NULL)
   {
     return 0;
   }
 
-  IplImage *img_color = cvLoadImage(img_path, 1);
+  IplImage *img_color = cvLoadImage(in_img, 1);
   int pts_num = 5;
   int im_width = img_grayscale->width;
   int im_height = img_grayscale->height;
@@ -111,12 +114,23 @@ int main(int argc, char** argv)
 
   // Visualize the results
   // cvRectangle(img_color, cvPoint(faces[0].bbox.x, faces[0].bbox.y), cvPoint(faces[0].bbox.x + faces[0].bbox.width - 1, faces[0].bbox.y + faces[0].bbox.height - 1), CV_RGB(255, 0, 0));
+  cout << argv[2] << endl;
   for (int i = 0; i<pts_num; i++)
   {
     cvCircle(img_color, cvPoint(points[i].x, points[i].y), 2, CV_RGB(0, 255, 0), CV_FILLED);
-    cout << "Points[" << i << "]: (" << points[i].x << ", " << points[i].y << ")" << endl;
+    cout << "Points[" << i << "]: (" << int(points[i].x) << ", " << int(points[i].y) << ")" << endl;
   }
-  cvSaveImage(output_path, img_color);
+  cvSaveImage(out_img, img_color);
+
+  // save detected facial landmarks to a txt file
+  ofstream pts_stream(pts_file);
+  if (pts_stream.is_open()) {
+    pts_stream << argv[2] << endl;
+    for (int i = 0; i < pts_num; i++) {
+	  pts_stream << int(points[i].x) << " " << int(points[i].y) << endl;
+	}
+    pts_stream.close();
+  }
 
   // Release memory
   cvReleaseImage(&img_color);
